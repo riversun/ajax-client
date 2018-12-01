@@ -3,6 +3,20 @@ A simple ajax client for js.
 
 jQuery is great, but do you use jQuery(80KB over) only for ajax?
 
+
+## install
+
+- Download directly
+
+[download ajax-client.js](https://raw.githubusercontent.com/riversun/ajax-client/master/dist/ajaxclient.js)
+
+- install package with npm
+
+```shell
+npm install ajax-client 
+```
+
+
 ## usage
 
 - Post JSON string to server,Receive JSON string from server.
@@ -51,7 +65,7 @@ jQuery is great, but do you use jQuery(80KB over) only for ajax?
     <title>ajax-client example</title>
 </head>
 <body>
-<script src="ajaxclient.js"></script>
+<script src="https://raw.githubusercontent.com/riversun/ajax-client/master/dist/ajaxclient.js"></script>
 <script>
     const ajax = new org.riversun.AjaxClient();
 
