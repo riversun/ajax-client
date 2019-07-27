@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server",
     "build": "webpack --config webpack.config.js",
-    "test-server":"node src/TestServer.js"
+    "test-server": "node src/TestServer.js"
   },
   "author": "Tom Misawa <riversun.org@gmail.com> (https://github.com/riversun)",
   "license": "ISC",
