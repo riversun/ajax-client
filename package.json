@@ -1,15 +1,16 @@
 {
   "name": "ajax-client",
-  "version": "0.1.0",
-  "description": "",
-  "main": "index.js",
+  "version": "1.0.0",
+  "description": "Lightweight ajax client",
+  "main": "lib/ajaxclient.js",
   "scripts": {
     "start": "webpack-dev-server",
     "build": "webpack --config webpack.config.js",
-    "test-server": "node src/TestServer.js"
+    "release": "webpack --config webpack.config.js --mode production",
+    "server": "node src/TestServer.js"
   },
   "author": "Tom Misawa <riversun.org@gmail.com> (https://github.com/riversun)",
-  "license": "ISC",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/riversun/ajax-client.git"

@@ -6,16 +6,17 @@ jQuery is great, but do you use jQuery(80KB over) only for ajax?
 
 ## install
 
-- Download directly
-
-[download ajax-client.js](https://raw.githubusercontent.com/riversun/ajax-client/master/dist/ajaxclient.js)
-
-- install package with npm
+- use package with npm
 
 ```shell
 npm install ajax-client 
 ```
 
+- use from CDN
+
+```
+<script src="https://cdn.jsdelivr.net/npm/ajax-client@1.0.0/lib/ajax-client.js"></script>
+```
 
 ## usage
 
@@ -23,7 +24,7 @@ npm install ajax-client
 
 ```javascript
 
-   const ajax = new org.riversun.AjaxClient();
+   const ajax = new AjaxClient();
 
     //Data object to send
     const data = {
@@ -67,7 +68,7 @@ npm install ajax-client
 <body>
 <script src="https://raw.githubusercontent.com/riversun/ajax-client/master/dist/ajaxclient.js"></script>
 <script>
-    const ajax = new org.riversun.AjaxClient();
+    const ajax = new AjaxClient();
 
     //Data object to send
     const data = {
