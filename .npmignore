@@ -1,0 +1,15 @@
+src_server
+test
+gulpfile.js
+node_modules
+.DS_Store
+src_server
+src
+public
+*.iml
+*.ipr
+*.iws
+.idea/
+target
+build
+coverage

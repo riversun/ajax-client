@@ -1,5 +1,10 @@
 # ajax-client
-A simple ajax client for js.
+[![npm version](https://badge.fury.io/js/ajax-client.svg)](https://badge.fury.io/js/ajax-client)
+[![CircleCI](https://circleci.com/gh/riversun/ajax-client/tree/master.svg?style=shield)](https://circleci.com/gh/riversun/ajax-client/tree/master)
+[![codecov](https://codecov.io/gh/riversun/ajax-client/branch/master/graph/badge.svg)](https://codecov.io/gh/riversun/ajax-client)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A simple ajax client with jQuery like ajax API for js.
 
 jQuery is great, but do you use jQuery(80KB over) only for ajax?
 
@@ -33,6 +38,7 @@ npm install ajax-client
 
     //Do async post request
     ajax.postAsync({
+        type: 'post',
         url: 'http://localhost:9999/api',//Endpoint
         headers: {
             'X-Original-Header1': 'header-value-1',//Additional Headers

@@ -5,83 +5,121 @@
  */
 export default class AjaxClient {
 
-    constructor() {
+  constructor() {
+  }
+
+  getAsync(m) {
+
+    m.type = 'get';
+    this.ajax(m);
+  }
+
+  postAsync(m) {
+    m.type = 'post';
+    this.ajax(m);
+  }
+
+  ajax(m) {
+    //use XMLHttpRequest2 style
+    const xhr = new XMLHttpRequest();
+
+    if (!m.url) {
+      throw Error('Please specify url.');
     }
 
-    postAsync(m) {
 
-        //use XMLHttpRequest2 style
-        const xhr = new XMLHttpRequest();
+    //use async mode
+    const ASYNC = true;
 
-        if (!m.url) {
-            console.error("Please specify url.");
-            return;
-        }
+    if (m.type === 'post') {
+      xhr.open('POST', m.url, ASYNC);
+    } else if (m.type === 'get') {
+      xhr.open('GET', m.url, ASYNC);
+    } else {
+      throw Error(`type:${m.type} is not supported`);
+    }
 
-        //use async mode
-        const ASYNC = true;
 
-        //Supported only 'post' method by now.
-        xhr.open('post', m.url, ASYNC);
+    //Supported only 'json' method by now.
+    if (m.dataType && m.dataType === 'json') {
+      xhr.responseType = 'text';
+    } else if (m.dataType && m.dataType === 'text') {
+      xhr.responseType = 'text';
+    } else {
+      throw Error(`Please check dataType:${m.dataType}. "json" or "text"  is supported as dataType now.`);
+    }
+    if (m.contentType) {
+      try {
+        xhr.setRequestHeader('Content-Type', m.contentType);
+      } catch (e) {
+        throw Error(`Invalid content type ${m.contentType}`);
+      }
 
-        //Supported only 'json' method by now.
-        if (m.dataType && m.dataType == 'json') {
-            xhr.responseType = 'text';
+    } else {
+      throw Error('Please specify contentType.');
+    }
+
+    //Original headers
+    if (m.headers) {
+      for (const key in m.headers) {
+        const value = m.headers[key];
+        xhr.setRequestHeader(key, value);
+      }
+    }
+
+    if (m.timeoutMillis) {
+      xhr.timeout = m.timeoutMillis;
+    }
+
+
+    xhr.onload = evt => {
+
+      if (xhr.status == 200) {
+
+        let data = '';
+        if (m.dataType == 'json') {
+
+          data = JSON.parse(xhr.response);
+
         } else {
-            console.error('Please specify dataType. Supported only "json" now.');
+          data = xhr.response;
         }
-
-        if (m.contentType) {
-            xhr.setRequestHeader('Content-Type', m.contentType);
-        } else {
-            console.error('Please specify contentType.');
-            return;
+        if (m.success) {
+          m.success(data, xhr);
         }
+      } else {
 
-        //Original headers
-        if (m.headers) {
-            for (let key in m.headers) {
-                const value = m.headers[key];
-                xhr.setRequestHeader(key, value);
-            }
-        }
-
-        if (m.timeOutMillis) {
-            xhr.timeout = m.timeOutMillis;
-        }
-
-        xhr.onload = evt => {
-
-            if (xhr.status == 200) {
-
-                if (m.dataType == 'json') {
-                    const data = JSON.parse(xhr.response);
-                    if (m.success) {
-                        m.success(data);
-                    }
-                }
-            } else {
-
-                console.error("error:"+xhr.statusText);
-                if (m.error) {
-                    m.error(evt);
-                }
-            }
-
-        };
-
-
-        if (m.timeout) {
-            xhr.ontimeout = m.timeout;
-        }
-
+        //console.error("error:" + xhr.statusText);
         if (m.error) {
-            xhr.onerror = m.error;
+          m.error(evt, xhr);
         }
+      }
 
-        if (m.data) {
-            xhr.send(m.data);
-        }
+    };
 
+
+    if (m.timeout) {
+      xhr.ontimeout = (e) => {
+        m.timeout(e, xhr);
+      };
     }
+
+    if (m.error) {
+      xhr.onerror = (e) => {
+        m.error(e, xhr);
+      }
+    }
+
+    if (m.type === 'post') {
+      if (m.data) {
+        xhr.send(m.data);
+      } else {
+        throw Error('.data is not specified.data must be specified on "POST" mode.');
+      }
+
+    } else if (m.type === 'get') {
+      xhr.send(null);
+    } else {
+    }
+  }
 }

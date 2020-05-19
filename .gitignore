@@ -1,4 +1,21 @@
-# Created by .ignore support plugin (hsz.mobi)
-/node_modules/
-.idea
+# for Eclipse
+.classpath
+.project
+.settings
 
+# for build
+target
+build
+
+# for IDEA
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# for  mac
+.DS_Store
+
+/bin/
+/node_modules/
+/coverage/

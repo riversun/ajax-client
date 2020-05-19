@@ -7,7 +7,7 @@
     "start": "webpack-dev-server",
     "build": "webpack --config webpack.config.js",
     "release": "webpack --config webpack.config.js --mode production",
-    "server": "node src/TestServer.js"
+    "server": "node src_test_server/TestServer.js"
   },
   "author": "Tom Misawa <riversun.org@gmail.com> (https://github.com/riversun)",
   "license": "MIT",
@@ -26,6 +26,13 @@
     "express": "^4.17.1",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^3.11.0",
+    "babel-jest": "^26.0.1",
+    "jest": "^26.0.1"
+  },
+  "dependencies": {
+  },
+  "directories": {
+    "test": "test"
   }
 }
