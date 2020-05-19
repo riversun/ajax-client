@@ -25,40 +25,61 @@ npm install ajax-client
 
 ## usage
 
+### Post
+
 - Post JSON string to server,Receive JSON string from server.
 
 ```javascript
 
-   const ajax = new AjaxClient();
+       const client = new AjaxClient();
+ 
+       //Data object to send
+       const data = {
+         message: "hello"
+       }
+ 
+       client.ajax({
+         type: 'post',
+         url: 'http://localhost:9999/api',
+         headers: {
+           'X-Original-Header1': 'header-value-1',//Additional Headers
+           'X-Original-Header2': 'header-value-2',
+         },
+         contentType: 'application/json',//content-type of sending data
+         data: JSON.stringify(data),//text data
+         dataType: 'json',//data type to parse when receiving response from server
+         timeoutMillis: 5000,//timeout milli-seconds
+ 
+         success: (response, xhr) => {
+         },
+         error: (e, xhr) => {
+ 
+         },
+         timeout: (e, xhr) => {
+ 
+         }
+       });
 
-    //Data object to send
-    const data = {
-        message: "hello"
-    }
+```
 
-    //Do async post request
-    ajax.postAsync({
-        type: 'post',
-        url: 'http://localhost:9999/api',//Endpoint
-        headers: {
-            'X-Original-Header1': 'header-value-1',//Additional Headers
-            'X-Original-Header2': 'header-value-2',
-        },
-        contentType: 'application/json; charset = UTF-8',//content-type of sending data
-        data: JSON.stringify(data),//text data
-        dataType: 'json',//data type to parse when receiving response from server
+### Get
+
+```javascript
+     const client = new AjaxClient();
+
+      client.ajax({
+        type: 'get',
+        url: 'http://localhost:9999/something.html',
+        contentType: 'application/json',//content-type of sending data
+        dataType: 'text',//data type to parse when receiving response from server
         timeoutMillis: 5000,//timeout milli-seconds
-        success: response => {
-            console.log(response);
+        success: (response, xhr) => {
         },
-        error: e => {
-            console.error('Error occurred');
+        error: (e, xhr) => {
         },
-        timeout: e => {
-            console.error('Timeout occurred.');
+        timeout: (e, xhr) => {
         }
-    });
-
+      });
 ```
 
 ## Example (using ajax-client)
