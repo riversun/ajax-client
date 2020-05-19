@@ -13,3 +13,4 @@ public
 target
 build
 coverage
+.circleci
