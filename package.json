@@ -7,7 +7,8 @@
     "start": "webpack-dev-server",
     "build": "webpack --config webpack.config.js",
     "release": "webpack --config webpack.config.js --mode production",
-    "server": "node src_test_server/TestServer.js"
+    "server": "node src_test_server/TestServer.js",
+    "test": "jest -i"
   },
   "author": "Tom Misawa <riversun.org@gmail.com> (https://github.com/riversun)",
   "license": "MIT",
