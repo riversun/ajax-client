@@ -20,7 +20,7 @@ npm install ajax-client
 - use from CDN
 
 ```
-<script src="https://cdn.jsdelivr.net/npm/ajax-client@1.0.2/lib/ajax-client.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ajax-client@1.2.0/lib/ajax-client.js"></script>
 ```
 
 ## usage
