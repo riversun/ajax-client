@@ -3,27 +3,27 @@
  * Simple XMLHttpRequest client.
  * Now supported 'post' method,dataType 'json'
  */
-export default class AjaxClient {
+export class AjaxClient {
 
   constructor() {
   }
 
-  getAsync(m) {
+  getAsync(options) {
 
-    m.type = 'get';
-    this.ajax(m);
+    options.type = 'get';
+    this.ajax(options);
   }
 
-  postAsync(m) {
-    m.type = 'post';
-    this.ajax(m);
+  postAsync(options) {
+    options.type = 'post';
+    this.ajax(options);
   }
 
-  ajax(m) {
+  ajax(options) {
     //use XMLHttpRequest2 style
     const xhr = new XMLHttpRequest();
 
-    if (!m.url) {
+    if (!options.url) {
       throw Error('Please specify url.');
     }
 
@@ -31,28 +31,28 @@ export default class AjaxClient {
     //use async mode
     const ASYNC = true;
 
-    if (m.type === 'post') {
-      xhr.open('POST', m.url, ASYNC);
-    } else if (m.type === 'get') {
-      xhr.open('GET', m.url, ASYNC);
+    if (options.type === 'post') {
+      xhr.open('POST', options.url, ASYNC);
+    } else if (options.type === 'get') {
+      xhr.open('GET', options.url, ASYNC);
     } else {
-      throw Error(`type:${m.type} is not supported`);
+      throw Error(`type:${options.type} is not supported`);
     }
 
 
     //Supported only 'json' method by now.
-    if (m.dataType && m.dataType === 'json') {
+    if (options.dataType && options.dataType === 'json') {
       xhr.responseType = 'text';
-    } else if (m.dataType && m.dataType === 'text') {
+    } else if (options.dataType && options.dataType === 'text') {
       xhr.responseType = 'text';
     } else {
-      throw Error(`Please check dataType:${m.dataType}. "json" or "text"  is supported as dataType now.`);
+      throw Error(`Please check dataType:${options.dataType}. "json" or "text"  is supported as dataType now.`);
     }
-    if (m.contentType) {
+    if (options.contentType) {
       try {
-        xhr.setRequestHeader('Content-Type', m.contentType);
+        xhr.setRequestHeader('Content-Type', options.contentType);
       } catch (e) {
-        throw Error(`Invalid content type ${m.contentType}`);
+        throw Error(`Invalid content type ${options.contentType}`);
       }
 
     } else {
@@ -60,15 +60,15 @@ export default class AjaxClient {
     }
 
     //Original headers
-    if (m.headers) {
-      for (const key in m.headers) {
-        const value = m.headers[key];
+    if (options.headers) {
+      for (const key in options.headers) {
+        const value = options.headers[key];
         xhr.setRequestHeader(key, value);
       }
     }
 
-    if (m.timeoutMillis) {
-      xhr.timeout = m.timeoutMillis;
+    if (options.timeoutMillis) {
+      xhr.timeout = options.timeoutMillis;
     }
 
 
@@ -77,47 +77,47 @@ export default class AjaxClient {
       if (xhr.status == 200) {
 
         let data = '';
-        if (m.dataType == 'json') {
+        if (options.dataType == 'json') {
 
           data = JSON.parse(xhr.response);
 
         } else {
           data = xhr.response;
         }
-        if (m.success) {
-          m.success(data, xhr);
+        if (options.success) {
+          options.success(data, xhr);
         }
       } else {
 
         //console.error("error:" + xhr.statusText);
-        if (m.error) {
-          m.error(evt, xhr);
+        if (options.error) {
+          options.error(evt, xhr);
         }
       }
 
     };
 
 
-    if (m.timeout) {
+    if (options.timeout) {
       xhr.ontimeout = (e) => {
-        m.timeout(e, xhr);
+        options.timeout(e, xhr);
       };
     }
 
-    if (m.error) {
+    if (options.error) {
       xhr.onerror = (e) => {
-        m.error(e, xhr);
+        options.error(e, xhr);
       }
     }
 
-    if (m.type === 'post') {
-      if (m.data) {
-        xhr.send(m.data);
+    if (options.type === 'post') {
+      if (options.data) {
+        xhr.send(options.data);
       } else {
         throw Error('.data is not specified.data must be specified on "POST" mode.');
       }
 
-    } else if (m.type === 'get') {
+    } else if (options.type === 'get') {
       xhr.send(null);
     } else {
     }

@@ -13,5 +13,9 @@ module.exports = {
     "test-util"
   ],
   coverageDirectory: "./coverage/",
-  collectCoverage: true
+  collectCoverage: true,
+  testEnvironmentOptions: {
+    "runScripts": "dangerously",
+    "resources": "usable",
+  },
 };

@@ -7,9 +7,8 @@
 <body>
 <script src="ajax-client.js"></script>
 <script>
-  const ajax = new AjaxClient();
+  const ajax = new AjaxClient2();
 
-  //Data object to send
   const data = {
     message: "hello"
   }
@@ -26,15 +25,25 @@
     data: JSON.stringify(data),//text data
     dataType: 'json',//data type to parse when receiving response from server
     timeoutMillis: 5000,//timeout milli-seconds
-    success: response => {
-      document.write(JSON.stringify(response));
+    success: (json, xhr) => {
+      document.body.innerHTML += 'json success:' + JSON.stringify(json) + '<br>';
     },
-    error: e => {
-      console.error('Error occurred');
+  }).done((json) => {
+    document.body.innerHTML += 'json done:' + JSON.stringify(json) + '<br>';
+  });
+
+
+  //
+  ajax.ajax({
+    type: 'get',
+    url: 'http://localhost:9999/api?message=hello2',//Endpoint
+    contentType: 'application/json',//content-type of sending data
+    dataType: 'jsonp',
+    success: (json, xhr) => {
+      document.body.innerHTML += 'jsonp success:' + JSON.stringify(json) + '<br>';
     },
-    timeout: e => {
-      console.error('Timeout occurred.');
-    }
+  }).done((json) => {
+    document.body.innerHTML += 'jsonp done:' + JSON.stringify(json) + '<br>';
   });
 
 </script>

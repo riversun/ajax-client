@@ -10,7 +10,7 @@ const server = {
 
   // Example class constructor definition
   //Edit Class Name
-  TestServer: function() {
+  TestServer: function(originalPort) {
     var me = this;
 
 
@@ -21,7 +21,10 @@ const server = {
     const bodyParser = require('body-parser');
 
     this.app.use(bodyParser.json());
-    var port = process.env.PORT || 9999;
+    let port = process.env.PORT || 9999;
+    if (originalPort) {
+      port = originalPort;
+    }
 
     //Allow CORS
     this.app.use(function(req, res, next) {
@@ -34,9 +37,7 @@ const server = {
 
     //Handle 'post' as 'http://localhost:9999/api'
     this.app.post('/api', bodyParser.json(), function(req, res, next) {
-
       res.status(200);
-
       const data = req.body;
       if (data) {
         let message = "Hi,there! You say " + data.message;
@@ -57,20 +58,30 @@ const server = {
 
       res.status(200);
 
+      const query = req.query;
       const data = req.body;
+      const callback = query.callback;
+      let message = "Hi,there! You say " + query.message;
+      let jsonObj = {
+        output: message
+      };
+
       if (data) {
-        let message = "Hi,there! You say " + data.message;
-        res.json({
-          output: message
-        });
+        if (callback) {
+          //jsonp
+          res.header('Content-Type', 'text/javascript;charset=utf-8');
+          const responseText = callback + '(' + JSON.stringify(jsonObj) + ')';
+          res.end(responseText);
+        } else {
+          //ajax
+          res.json(jsonObj);
+        }
       } else {
         let message = 'error:message not found.';
         res.json({
           error: message
         });
       }
-
-
     });
 
     this.app.get('/timeout', bodyParser.json(), function(req, res, next) {
