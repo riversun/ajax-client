@@ -17,10 +17,24 @@ jQuery is great, but do you use jQuery(80KB over) only for ajax?
 npm install ajax-client 
 ```
 
+and write followings in your code
+
+- AjaxClient is based on the XmlHttpRequest2
+
+```javascript
+import {AjaxClient} from 'ajax-client'
+```
+
+- AjaxClient2 is base on fetch API
+
+```javascript
+import {AjaxClient2 as AjaxClient} from 'ajax-client'
+```
+
 - use from CDN
 
 ```
-<script src="https://cdn.jsdelivr.net/npm/ajax-client@1.2.0/lib/ajax-client.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ajax-client/lib/ajax-client.js"></script>
 ```
 
 ## usage
