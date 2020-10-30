@@ -1,11 +1,12 @@
 const Server = require('../test-util/TestServer.js');
-const {AjaxClient} = require('../src/AjaxClient.js');
+const { AjaxClient } = require('../src/AjaxClient.js');
 let server;
 
 function getRandomPort() {
-  return 40000+Math.floor(Math.random() * Math.floor(1000));
+  return 40000 + Math.floor(Math.random() * Math.floor(1000));
 }
-const serverPort=getRandomPort();
+
+const serverPort = getRandomPort();
 
 beforeAll(() => {
 
@@ -54,6 +55,58 @@ describe('AjaxClient', () => {
 
         }
       });
+
+    });//test
+    test('"post in text with async/await"', async () => {
+
+      const client = new AjaxClient();
+
+      //Data object to send
+      const data = {
+        message: "hello"
+      }
+
+      const result = await client.post({
+        type: 'post',
+        url: `http://localhost:${serverPort}/api`,
+        headers: {
+          'X-Original-Header1': 'header-value-1',//Additional Headers
+          'X-Original-Header2': 'header-value-2',
+        },
+        contentType: 'application/json',//content-type of sending data
+        data: JSON.stringify(data),//text data
+        dataType: 'json',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+      });
+      expect(result.success).toBe(true);
+      expect(JSON.stringify(result.data)).toBe(JSON.stringify({ output: 'Hi,there! You say hello' }));
+
+
+    });//test
+    test('"post object with async/await"', async () => {
+
+      const client = new AjaxClient();
+
+      //Data object to send
+      const data = {
+        message: "hello"
+      }
+
+      const result = await client.post({
+        type: 'post',
+        url: `http://localhost:${serverPort}/api`,
+        headers: {
+          'X-Original-Header1': 'header-value-1',//Additional Headers
+          'X-Original-Header2': 'header-value-2',
+        },
+        contentType: 'application/json',//content-type of sending data
+        data: data,//text data
+        dataType: 'json',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+      });
+      expect(result.success).toBe(true);
+      expect(JSON.stringify(result.data)).toBe(JSON.stringify({ output: 'Hi,there! You say hello' }));
+
 
     });//test
     test('check dataType', (done) => {
@@ -164,7 +217,7 @@ describe('AjaxClient', () => {
           throw Error('404 Error should be occurred.');
         },
         error: (e, xhr) => {
-        done();
+          done();
         },
         timeout: (e, xhr) => {
           throw Error('404 Error should be occurred.');

@@ -21,6 +21,80 @@ export class AjaxClient2 {
     this.ajax(options);
   }
 
+  async get(options) {
+    options.type = 'get';
+
+    if (options.contentType === 'application/json') {
+      if (this.typeOf(options.data) === 'String') {
+
+      } else {
+        const obj = options.data;
+        options.data = JSON.stringify(obj);
+      }
+    }
+
+    return new Promise((resolve) => {
+      options.success = (response) => {
+        resolve({ success: true, data: response });
+      };
+      options.error = (e) => {
+        resolve({
+          success: false,
+          cause: 'error',
+          error: e,
+        });
+      };
+      options.timeout = (e) => {
+        resolve({
+          success: false,
+          cause: 'timeout',
+          error: e,
+        });
+      };
+      this.ajax(options);
+    });
+
+  }
+
+  async post(options) {
+    options.type = 'post';
+
+    if (options.contentType === 'application/json') {
+      if (this.typeOf(options.data) === 'String') {
+
+      } else {
+        const obj = options.data;
+        options.data = JSON.stringify(obj);
+      }
+    }
+
+    return new Promise((resolve) => {
+      options.success = (response) => {
+        resolve({
+          success: true,
+          data: response
+        });
+      };
+      options.error = (e) => {
+        resolve({
+          success: false,
+          cause: 'error',
+          error: e,
+        });
+      };
+      options.timeout = (e) => {
+        resolve({
+          success: false,
+          cause: 'timeout',
+          error: e,
+        });
+      };
+      this.ajax(options);
+    });
+
+
+  }
+
   ajax(options) {
 
     const url = this._createUrl(options);
@@ -257,6 +331,11 @@ export class AjaxClient2 {
     });
     return uuid;
   }
+
+  typeOf(obj) {
+    return Object.prototype.toString.call(obj)
+      .slice(8, -1);
+  }
 }
 
 class AjaxResult {
@@ -292,4 +371,5 @@ class AjaxResult {
       this._failFunc(response);
     }
   }
+
 }

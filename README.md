@@ -76,6 +76,43 @@ import {AjaxClient2 as AjaxClient} from 'ajax-client'
 
 ```
 
+### Post with Async/Await
+
+```javascript
+  const result = await client.post({
+        type: 'post',
+        url: 'http://localhost:9999/api',
+        headers: {
+          'X-Original-Header1': 'header-value-1',//Additional Headers
+          'X-Original-Header2': 'header-value-2',
+        },
+        contentType: 'application/json',//content-type of sending data
+        data: data,
+        dataType: 'json',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+      });
+```
+
+#### Success Response 
+
+```javascript
+{
+success: true,
+data:{ },// response payload from server
+}
+```
+
+#### Error Response 
+
+```javascript
+{
+success: false;
+cause:'error',// 'error' or 'timeout'
+error:e,// error object
+}
+```
+
+
 ### Get
 
 ```javascript
@@ -84,7 +121,6 @@ import {AjaxClient2 as AjaxClient} from 'ajax-client'
       client.ajax({
         type: 'get',
         url: 'http://localhost:9999/something.html',
-        contentType: 'application/json',//content-type of sending data
         dataType: 'text',//data type to parse when receiving response from server
         timeoutMillis: 5000,//timeout milli-seconds
         success: (response, xhr) => {
@@ -94,6 +130,41 @@ import {AjaxClient2 as AjaxClient} from 'ajax-client'
         timeout: (e, xhr) => {
         }
       });
+```
+
+
+### Get with Async/Await
+
+```javascript
+  const result = await client.get({
+        type: 'post',
+        url: 'http://localhost:9999/api',
+        headers: {
+          'X-Original-Header1': 'header-value-1',//Additional Headers
+          'X-Original-Header2': 'header-value-2',
+        },
+        dataType: 'text',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+      });
+```
+
+#### Success Response 
+
+```javascript
+{
+success: true,
+data:{ },// response payload from server
+}
+```
+
+#### Error Response 
+
+```javascript
+{
+success: false;
+cause:'error',// 'error' or 'timeout'
+error:e,// error object
+}
 ```
 
 ## Example (using ajax-client)

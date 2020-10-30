@@ -19,6 +19,80 @@ export class AjaxClient {
     this.ajax(options);
   }
 
+  async get(options) {
+    options.type = 'get';
+
+    if (options.contentType === 'application/json') {
+      if (this.typeOf(options.data) === 'String') {
+
+      } else {
+        const obj = options.data;
+        options.data = JSON.stringify(obj);
+      }
+    }
+
+    return new Promise((resolve) => {
+      options.success = (response) => {
+        resolve({ success: true, data: response });
+      };
+      options.error = (e) => {
+        resolve({
+          success: false,
+          cause: 'error',
+          error: e,
+        });
+      };
+      options.timeout = (e) => {
+        resolve({
+          success: false,
+          cause: 'timeout',
+          error: e,
+        });
+      };
+      this.ajax(options);
+    });
+
+  }
+
+  async post(options) {
+    options.type = 'post';
+
+    if (options.contentType === 'application/json') {
+      if (this.typeOf(options.data) === 'String') {
+
+      } else {
+        const obj = options.data;
+        options.data = JSON.stringify(obj);
+      }
+    }
+
+    return new Promise((resolve) => {
+      options.success = (response) => {
+        resolve({
+          success: true,
+          data: response
+        });
+      };
+      options.error = (e) => {
+        resolve({
+          success: false,
+          cause: 'error',
+          error: e,
+        });
+      };
+      options.timeout = (e) => {
+        resolve({
+          success: false,
+          cause: 'timeout',
+          error: e,
+        });
+      };
+      this.ajax(options);
+    });
+
+
+  }
+
   ajax(options) {
     //use XMLHttpRequest2 style
     const xhr = new XMLHttpRequest();
@@ -121,5 +195,10 @@ export class AjaxClient {
       xhr.send(null);
     } else {
     }
+  }
+
+  typeOf(obj) {
+    return Object.prototype.toString.call(obj)
+      .slice(8, -1);
   }
 }
