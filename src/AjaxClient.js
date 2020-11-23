@@ -97,6 +97,9 @@ export class AjaxClient {
     //use XMLHttpRequest2 style
     const xhr = new XMLHttpRequest();
 
+    if (!options) {
+      throw Error('Please specify options like #ajax(options)');
+    }
     if (!options.url) {
       throw Error('Please specify url.');
     }
@@ -105,9 +108,9 @@ export class AjaxClient {
     //use async mode
     const ASYNC = true;
 
-    if (options.type === 'post') {
+    if (options.type && options.type.toLowerCase() === 'post') {
       xhr.open('POST', options.url, ASYNC);
-    } else if (options.type === 'get') {
+    } else if (options.type && options.type.toLowerCase() === 'get') {
       xhr.open('GET', options.url, ASYNC);
     } else {
       throw Error(`type:${options.type} is not supported`);
@@ -133,6 +136,7 @@ export class AjaxClient {
       throw Error('Please specify contentType.');
     }
 
+
     //Original headers
     if (options.headers) {
       for (const key in options.headers) {
@@ -141,10 +145,31 @@ export class AjaxClient {
       }
     }
 
+    // todo add support "xhrFields" for ajaxclient2(using FETCH API)
+    // Note:in fetch API
+    // fetch(url, {
+    //   mode: 'cors', // instead of "crossDomain: true" in jQuery
+    //   credentials: 'include' // with credentials
+    // })
+    // Note:in jQuery API
+    // $.ajax({
+    //   url: "some",
+    // crossDomain: true,
+    //   xhrFields: {
+    //     withCredentials: true
+    //   }
+    // Note:in XHR
+    // xhr.withCredentials = true;
+    if (options.xhrFields) { // options.crossDomain  is not mandatory on XHR
+      const { xhrFields } = options;
+      if (xhrFields.withCredentials === true) {
+        xhr.withCredentials = true;
+      }
+    }
+
     if (options.timeoutMillis) {
       xhr.timeout = options.timeoutMillis;
     }
-
 
     xhr.onload = evt => {
 
@@ -168,9 +193,7 @@ export class AjaxClient {
           options.error(evt, xhr);
         }
       }
-
     };
-
 
     if (options.timeout) {
       xhr.ontimeout = (e) => {
@@ -184,14 +207,28 @@ export class AjaxClient {
       }
     }
 
-    if (options.type === 'post') {
+    if (options.type && options.type.toLowerCase() === 'post') {
       if (options.data) {
-        xhr.send(options.data);
+        if (options.contentType === 'application/x-www-form-urlencoded') {
+          const fnEncodeForm = (data) => {
+            const params = [];
+            for (const name in data) {
+              const value = data[name];
+              const param = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+              params.push(param);
+            }
+            return params.join('&').replace(/%20/g, '+');// encoded space(=%20) to '+'
+          };
+
+          xhr.send(fnEncodeForm(options.data));
+        } else {
+          xhr.send(options.data);
+        }
       } else {
         throw Error('.data is not specified.data must be specified on "POST" mode.');
       }
 
-    } else if (options.type === 'get') {
+    } else if (options.type && options.type.toLowerCase()  === 'get') {
       xhr.send(null);
     } else {
     }

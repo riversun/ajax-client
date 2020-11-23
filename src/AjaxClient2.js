@@ -1,3 +1,5 @@
+const { URLSearchParams } = require("url");
+
 /**
  * AjaxClient2
  * ajax2 with fetch api
@@ -110,7 +112,7 @@ export class AjaxClient2 {
     if (!url) {
       throw Error('Please specify url.');
     }
-    if (method === 'post') {
+    if (method && method.toLowerCase() === 'post') {
 
       postBody = data;//JSON.stringify(data);
 
@@ -147,7 +149,7 @@ export class AjaxClient2 {
     }
   }
 
-  _getFetchParam(reqParam) {
+  _getFetchParam(reqParam, options) {
 
 
     const fetchParam = {
@@ -169,6 +171,12 @@ export class AjaxClient2 {
       throw Error('Please specify contentType.');
     }
 
+    if (options.xhrFields) {
+      const { xhrFields } = options;
+      if (xhrFields.withCredentials === true) {
+        fetchParam.credentials = 'include';
+      }
+    }
     //populate credentials
     if (reqParam.credentials) {
       fetchParam.credentials = reqParam.credentials;
@@ -184,14 +192,30 @@ export class AjaxClient2 {
 
     //populate body
     if (reqParam.body) {
-      fetchParam.body = reqParam.body;
+
+      if (reqParam.contentType === 'application/x-www-form-urlencoded') {
+        const fnCreateURLSearchParams = (formData) => {
+          const urlSearchParams = new URLSearchParams();
+          for (const paramName of Object.keys(formData)) {
+            urlSearchParams.append(paramName, formData[paramName])
+          }
+          return urlSearchParams;
+        };
+        const formData = reqParam.body;
+        const paramsFromFormData = fnCreateURLSearchParams(formData);
+        fetchParam.body = paramsFromFormData;
+      } else {
+        fetchParam.body = reqParam.body;
+      }
+
+
     }
     return fetchParam;
   }
 
   _handleData(reqParam, dataType, options) {
     const asyncResult = new AjaxResult();
-    const fetchParam = this._getFetchParam(reqParam);
+    const fetchParam = this._getFetchParam(reqParam, options);
 
     const fetchPromise = fetch(reqParam.url, fetchParam);
 
@@ -300,10 +324,10 @@ export class AjaxClient2 {
 
   _createUrl(options) {
 
-    if (options.type === 'post') {
+    if (options.type && options.type.toLowerCase() === 'post') {
       //POST
       return options.url;
-    } else if (options.type === 'get') {
+    } else if (options.type && options.type.toLowerCase() === 'get') {
       //GET
       let url = options.url;
       if (options.data) {
