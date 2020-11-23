@@ -154,7 +154,184 @@ describe('AjaxClient', () => {
       });
 
     });//test
+    test('"post with cookie"', async () => {
 
+      const client = new AjaxClient();
+
+      //Data object to send
+      const data = {
+        message: "hello"
+      }
+
+      // first access = Receive cookies with the intention of credential
+      await client.post({
+        type: 'post',
+        url: `http://localhost:${serverPort}/api-auth`,
+        headers: {
+          'X-Original-Header1': 'header-value-1',//Additional Headers
+          'X-Original-Header2': 'header-value-2',
+        },
+        contentType: 'application/json',//content-type of sending data
+        data: JSON.stringify(data),//text data
+        dataType: 'json',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+        crossDomain: true,
+        xhrFields: {
+          withCredentials: true,
+        },
+      });
+
+      // second access = make sure that the credential (cookie) is sent without being aware of it
+      const resultOf2ndAccess = await client.post({
+        type: 'post',
+        url: `http://localhost:${serverPort}/api-auth`,
+        headers: {
+          'X-Original-Header1': 'header-value-1',//Additional Headers
+          'X-Original-Header2': 'header-value-2',
+        },
+        contentType: 'application/json',//content-type of sending data
+        data: JSON.stringify(data),//text data
+        dataType: 'json',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+        crossDomain: true,
+        xhrFields: {
+          withCredentials: true,
+        },
+      });
+
+      expect(resultOf2ndAccess.success).toBe(true);
+
+      // todo  node-fetch doesn't support credentials:'include'
+      //expect(resultOf2ndAccess.data['req-cookies-copy']['test-name1']).toBe('test-value1');
+
+
+      // third access = withCredentials:false to ensure that no cookie is sent
+      const resultOf3rdAccess = await client.post({
+        type: 'post',
+        url: `http://localhost:${serverPort}/api-auth`,
+        headers: {
+          'X-Original-Header1': 'header-value-1',//Additional Headers
+          'X-Original-Header2': 'header-value-2',
+        },
+        contentType: 'application/json',//content-type of sending data
+        data: JSON.stringify(data),//text data
+        dataType: 'json',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+        crossDomain: true,
+        xhrFields: {
+          withCredentials: false,
+        },
+      });
+      expect(resultOf3rdAccess.data['req-cookies-copy']).toStrictEqual({});
+
+
+    });//test
+    test('"post with application/x-www-form-urlencoded"', async () => {
+
+      const client = new AjaxClient();
+
+      //Data object to send
+      const data = {
+        message: "hello"
+      }
+
+      // first access = Receive cookies with the intention of credential
+      const result = await client.post({
+        type: 'post',
+        url: `http://localhost:${serverPort}/form`,
+        headers: {
+          'X-Original-Header1': 'header-value-1',//Additional Headers
+          'X-Original-Header2': 'header-value-2',
+        },
+        contentType: 'application/x-www-form-urlencoded',
+        data: data,
+        dataType: 'json',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+        crossDomain: true,
+        xhrFields: {
+          withCredentials: true,
+        },
+      });
+      // Verify that the posted as "application/x-www-form-urlencoded"  form data is interpreted on the server side
+      expect(result.data.output).toBe(`Hi,there! You say hello`);//
+
+      // second access = make sure that the credential (cookie) is sent without being aware of it
+      const resultOf2ndAccess = await client.post({
+        type: 'post',
+        url: `http://localhost:${serverPort}/form`,
+        headers: {
+          'X-Original-Header1': 'header-value-1',//Additional Headers
+          'X-Original-Header2': 'header-value-2',
+        },
+        contentType: 'application/x-www-form-urlencoded',
+        data: data,
+        dataType: 'json',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+        crossDomain: true,
+        xhrFields: {
+          withCredentials: true,
+        },
+      });
+
+      expect(resultOf2ndAccess.success).toBe(true);
+      // todo  node-fetch doesn't support credentials:'include'
+      // expect(resultOf2ndAccess.data['req-cookies-copy']['test-name2']).toBe('test-value2');
+
+      // third access = withCredentials:false to ensure that no cookie is sent
+      const resultOf3rdAccess = await client.post({
+        type: 'post',
+        url: `http://localhost:${serverPort}/form`,
+        headers: {
+          'X-Original-Header1': 'header-value-1',//Additional Headers
+          'X-Original-Header2': 'header-value-2',
+        },
+        contentType: 'application/x-www-form-urlencoded',
+        data: data,
+        dataType: 'json',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+        crossDomain: true,
+        xhrFields: {
+          withCredentials: false,
+        },
+      });
+      expect(resultOf3rdAccess.data['req-cookies-copy']).toStrictEqual({});
+
+
+    });//test
+    test('"POST"', (done) => {
+
+      const client = new AjaxClient();
+
+      //Data object to send
+      const data = {
+        message: "hello"
+      }
+
+      client.ajax({
+        type: 'POST',
+        url: `http://localhost:${serverPort}/api`,
+        headers: {
+          'X-Original-Header1': 'header-value-1',//Additional Headers
+          'X-Original-Header2': 'header-value-2',
+        },
+        contentType: 'application/json',//content-type of sending data
+        data: JSON.stringify(data),//text data
+        dataType: 'json',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+
+        success: (response, xhr) => {
+          expect(JSON.stringify(response)).toBe(JSON.stringify({ output: 'Hi,there! You say hello' }));
+          done();
+        },
+        error: (e, xhr) => {
+
+        },
+        timeout: (e, xhr) => {
+
+        }
+      });
+
+    });//test
     test('"post in text with async/await"', async () => {
 
       const client = new AjaxClient();
@@ -270,6 +447,34 @@ describe('AjaxClient', () => {
       });
 
     });//test
+    test('"GET"', (done) => {
+
+      const client = new AjaxClient();
+
+      //Data object to send
+      const data = {
+        message: "hello"
+      }
+
+      client.ajax({
+        type: 'GET',
+        url: `http://localhost:${serverPort}/test.html`,
+        contentType: 'application/json',//content-type of sending data
+        dataType: 'text',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+        success: (response, xhr) => {
+          expect(response).toContain('Test HTML');
+          done();
+        },
+        error: (e, xhr) => {
+          console.log('Error occurred' + xhr.status);
+        },
+        timeout: (e, xhr) => {
+          console.error('Timeout occurred.' + e);
+        }
+      });
+
+    });//test
     test('"get" with async/await', async () => {
 
       const client = new AjaxClient();
@@ -289,6 +494,7 @@ describe('AjaxClient', () => {
       expect(result.data).toContain('Test HTML');
 
     });//test
+
     test('"get" with parameters', (done) => {
 
       const client = new AjaxClient();
