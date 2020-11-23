@@ -455,7 +455,7 @@ describe('AjaxClient', () => {
       });
     });//test
 
-    test.skip('timeout', (done) => {
+    test('timeout', (done) => {
 
       // timeout is successfully implemented but node-fetch has error.
 

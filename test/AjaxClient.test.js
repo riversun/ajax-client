@@ -57,6 +57,40 @@ describe('AjaxClient', () => {
       });
 
     });//test
+    test('"POST"', (done) => {
+
+      const client = new AjaxClient();
+
+      //Data object to send
+      const data = {
+        message: "hello"
+      }
+
+      client.ajax({
+        type: 'POST',
+        url: `http://localhost:${serverPort}/api`,
+        headers: {
+          'X-Original-Header1': 'header-value-1',//Additional Headers
+          'X-Original-Header2': 'header-value-2',
+        },
+        contentType: 'application/json',//content-type of sending data
+        data: JSON.stringify(data),//text data
+        dataType: 'json',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+
+        success: (response, xhr) => {
+          expect(JSON.stringify(response)).toBe(JSON.stringify({ output: 'Hi,there! You say hello' }));
+          done();
+        },
+        error: (e, xhr) => {
+
+        },
+        timeout: (e, xhr) => {
+
+        }
+      });
+
+    });//test
     test('"post in text with async/await"', async () => {
 
       const client = new AjaxClient();
@@ -153,6 +187,34 @@ describe('AjaxClient', () => {
 
       client.ajax({
         type: 'get',
+        url: `http://localhost:${serverPort}/test.html`,
+        contentType: 'application/json',//content-type of sending data
+        dataType: 'text',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+        success: (response, xhr) => {
+          expect(response).toContain('Test HTML');
+          done();
+        },
+        error: (e, xhr) => {
+          console.log('Error occurred' + xhr.status);
+        },
+        timeout: (e, xhr) => {
+          console.error('Timeout occurred.' + e);
+        }
+      });
+
+    });//test
+    test('"GET"', (done) => {
+
+      const client = new AjaxClient();
+
+      //Data object to send
+      const data = {
+        message: "hello"
+      }
+
+      client.ajax({
+        type: 'GET',
         url: `http://localhost:${serverPort}/test.html`,
         contentType: 'application/json',//content-type of sending data
         dataType: 'text',//data type to parse when receiving response from server
