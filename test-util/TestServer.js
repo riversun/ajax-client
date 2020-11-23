@@ -13,13 +13,13 @@ const server = {
   TestServer: function(originalPort) {
     var me = this;
 
-
+    const cookieParser = require('cookie-parser');
     const express = require('express');
     this.app = express();
 
 
     const bodyParser = require('body-parser');
-
+    this.app.use(cookieParser())
     this.app.use(bodyParser.json());
     let port = process.env.PORT || 9999;
     if (originalPort) {
@@ -28,8 +28,12 @@ const server = {
 
     //Allow CORS
     this.app.use(function(req, res, next) {
-      res.header("Access-Control-Allow-Origin", "*");
+      //res.header("Access-Control-Allow-Origin", "*");
+      res.header('Access-Control-Allow-Origin', req.headers.origin);
       res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Accept,X-Original-Header1,X-Original-Header2");
+      res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+      res.header('Access-Control-Allow-Credentials', true);
+      // res.header('Access-Control-Max-Age', '86400');
       next();
     });
 
@@ -50,9 +54,59 @@ const server = {
           error: message
         });
       }
-
-
     });
+
+    this.app.post('/api-auth', bodyParser.json(), function(req, res, next) {
+      res.status(200);
+      const data = req.body;
+      if (data) {
+
+        res.cookie('test-name1', 'test-value1', {
+          maxAge: 60000,
+          httpOnly: false,// true:cannot access from JS
+          secure:false,// true:can only send via HTTPS
+        });
+
+        let message = "Hi,there! You say " + data.message;
+        res.json({
+          output: message,
+          'req-cookies-copy':req.cookies,
+        });
+      } else {
+        let message = 'error:message not found.';
+        res.json({
+          error: message
+        });
+      }
+    });
+    this.app.post('/form', bodyParser.urlencoded({ extended: true }),function(req, res, next) {
+      res.status(200);
+
+      const data = req.body;
+
+
+      if (data) {
+
+        res.cookie('test-name2', 'test-value2', {
+          maxAge: 60000,
+          httpOnly: false,// true:cannot access from JS
+          secure:false,// true:can only send via HTTPS
+        });
+
+        let message = "Hi,there! You say " + data.message;
+        res.json({
+          output: message,
+          'req-cookies-copy':req.cookies,
+        });
+      } else {
+        let message = 'error:message not found.';
+        res.json({
+          error: message
+        });
+      }
+    });
+
+
 
     this.app.get('/api', bodyParser.json(), function(req, res, next) {
 

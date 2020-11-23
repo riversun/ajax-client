@@ -270,6 +270,25 @@ describe('AjaxClient', () => {
       });
 
     });//test
+    test('"get" with async/await', async () => {
+
+      const client = new AjaxClient();
+
+      //Data object to send
+      const data = {
+        message: "hello"
+      }
+
+      const result = await client.get({
+        url: `http://localhost:${serverPort}/test.html`,
+        contentType: 'application/json',//content-type of sending data
+        dataType: 'text',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+      });
+      expect(result.success).toBe(true);
+      expect(result.data).toContain('Test HTML');
+
+    });//test
     test('"get" with parameters', (done) => {
 
       const client = new AjaxClient();

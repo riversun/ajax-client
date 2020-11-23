@@ -219,6 +219,7 @@ export class AjaxClient {
             }
             return params.join('&').replace(/%20/g, '+');// encoded space(=%20) to '+'
           };
+
           xhr.send(fnEncodeForm(options.data));
         } else {
           xhr.send(options.data);

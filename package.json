@@ -27,6 +27,7 @@
     "@babel/preset-env": "^7.9.6",
     "babel-jest": "^26.0.1",
     "babel-loader": "^8.1.0",
+    "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
     "jest": "^26.0.1",
     "node-fetch": "^2.6.1",
