@@ -63,7 +63,10 @@ import {AjaxClient2 as AjaxClient} from 'ajax-client'
          data: JSON.stringify(data),//text data
          dataType: 'json',//data type to parse when receiving response from server
          timeoutMillis: 5000,//timeout milli-seconds
- 
+         // crossDomain: true,
+         // xhrFields: {
+         //   withCredentials: true,
+         // },
          success: (response, xhr) => {
          },
          error: (e, xhr) => {
@@ -75,6 +78,42 @@ import {AjaxClient2 as AjaxClient} from 'ajax-client'
        });
 
 ```
+
+- Post form data
+
+```javascript
+     const data = {
+        message: "hello"
+      }
+
+      // first access = Receive cookies with the intention of credential
+      client.ajax({
+        type: 'post',
+        url: `http://localhost:${serverPort}/form`,
+        headers: {
+          'X-Original-Header1': 'header-value-1',//Additional Headers
+          'X-Original-Header2': 'header-value-2',
+        },
+        contentType: 'application/x-www-form-urlencoded',
+        data,
+        dataType: 'json',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+         // crossDomain: true,
+         // xhrFields: {
+         //   withCredentials: true,
+         // },
+         success: (response, xhr) => {
+
+         },
+         error: (e, xhr) => {
+ 
+         },
+         timeout: (e, xhr) => {
+ 
+         }
+      });
+```
+
 
 ### Post with Async/Await
 
