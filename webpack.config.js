@@ -18,7 +18,7 @@ module.exports = (env, argv) => {
       disableHostCheck: true,
     },
     entry: {
-      'ajax-client': ['./src/index.js'],
+      'ajax-client': ['@babel/polyfill','./src/index.js'],
 
     },
     output: {
@@ -64,7 +64,7 @@ module.exports = (env, argv) => {
       alias: {}
     },
     plugins: [
-      // new webpack.BannerPlugin(`[name] v${version} Copyright (c) 2019-2020 https://github.com/riversun(riversun.org@gmail.com)`),
+       // new webpack.BannerPlugin(`[name] v${version} Copyright (c) 2019-2020 https://github.com/riversun(riversun.org@gmail.com)`),
     ],
 
   };
