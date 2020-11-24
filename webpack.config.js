@@ -18,8 +18,7 @@ module.exports = (env, argv) => {
       disableHostCheck: true,
     },
     entry: {
-      'ajax-client': ['@babel/polyfill','./src/index.js'],
-
+      'ajax-client': ['./src/index.js'],
     },
     output: {
       path: path.join(__dirname, 'lib'),

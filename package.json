@@ -1,8 +1,11 @@
 {
   "name": "ajax-client",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "A simple ajax client with 'jquery-like' API",
   "main": "lib/ajax-client.js",
+  "browserslist": [
+    "since 2017-06"
+  ],
   "scripts": {
     "start": "run-p start:api_server start:dev_server",
     "start:api_server": "node ./test-util/TestServerInvoker.js",
