@@ -193,16 +193,20 @@ export class AjaxClient2 {
     //populate body
     if (reqParam.body) {
 
-      if (reqParam.contentType === 'application/x-www-form-urlencoded') {
-        const fnCreateURLSearchParams = (formData) => {
-          const urlSearchParams = new URLSearchParams();
-          for (const paramName of Object.keys(formData)) {
-            urlSearchParams.append(paramName, formData[paramName])
+      if (reqParam.contentType.startsWith('application/x-www-form-urlencoded')) {
+
+        const fnEncodeForm = (formData) => {
+          const params = [];
+          for (const name in formData) {
+            const value = formData[name];
+            const param = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+            params.push(param);
           }
-          return urlSearchParams;
+          return params.join('&').replace(/%20/g, '+');// encoded space(=%20) to '+'
         };
+
         const formData = reqParam.body;
-        const paramsFromFormData = fnCreateURLSearchParams(formData);
+        const paramsFromFormData = fnEncodeForm(formData);
         fetchParam.body = paramsFromFormData;
       } else {
         fetchParam.body = reqParam.body;

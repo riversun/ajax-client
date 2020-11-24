@@ -209,18 +209,19 @@ export class AjaxClient {
 
     if (options.type && options.type.toLowerCase() === 'post') {
       if (options.data) {
-        if (options.contentType === 'application/x-www-form-urlencoded') {
-          const fnEncodeForm = (data) => {
+        if (options.contentType.startsWith('application/x-www-form-urlencoded')) {
+          const fnEncodeForm = (formData) => {
             const params = [];
-            for (const name in data) {
-              const value = data[name];
+            for (const name in formData) {
+              const value = formData[name];
               const param = encodeURIComponent(name) + '=' + encodeURIComponent(value);
               params.push(param);
             }
             return params.join('&').replace(/%20/g, '+');// encoded space(=%20) to '+'
           };
 
-          xhr.send(fnEncodeForm(options.data));
+          const formData = fnEncodeForm(options.data);
+          xhr.send(formData);
         } else {
           xhr.send(options.data);
         }
@@ -228,7 +229,7 @@ export class AjaxClient {
         throw Error('.data is not specified.data must be specified on "POST" mode.');
       }
 
-    } else if (options.type && options.type.toLowerCase()  === 'get') {
+    } else if (options.type && options.type.toLowerCase() === 'get') {
       xhr.send(null);
     } else {
     }
