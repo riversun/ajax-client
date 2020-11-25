@@ -119,7 +119,6 @@ import {AjaxClient2 as AjaxClient} from 'ajax-client'
 
 ```javascript
   const result = await client.post({
-        type: 'post',
         url: 'http://localhost:9999/api',
         headers: {
           'X-Original-Header1': 'header-value-1',//Additional Headers
@@ -176,7 +175,6 @@ error:e,// error object
 
 ```javascript
   const result = await client.get({
-        type: 'post',
         url: 'http://localhost:9999/api',
         headers: {
           'X-Original-Header1': 'header-value-1',//Additional Headers
