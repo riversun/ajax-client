@@ -223,7 +223,7 @@ export class AjaxClient2 {
     const asyncResult = new AjaxResult();
     const fetchParam = this._getFetchParam(reqParam, options);
 
-    const fnFetch = fetch || self.opt.fetch;
+    const fnFetch = self.opt.fetch || fetch ;
 
     const fetchPromise = fnFetch(reqParam.url, fetchParam);
 
