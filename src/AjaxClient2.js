@@ -9,7 +9,8 @@ const { URLSearchParams } = require("url");
  */
 export class AjaxClient2 {
 
-  constructor() {
+  constructor(opt) {
+    this.opt = opt || {};
   }
 
   getAsync(options) {
@@ -218,10 +219,13 @@ export class AjaxClient2 {
   }
 
   _handleData(reqParam, dataType, options) {
+    const self = this;
     const asyncResult = new AjaxResult();
     const fetchParam = this._getFetchParam(reqParam, options);
 
-    const fetchPromise = fetch(reqParam.url, fetchParam);
+    const fnFetch = fetch || self.opt.fetch;
+
+    const fetchPromise = fnFetch(reqParam.url, fetchParam);
 
     const timeout = (promise, options) => {
       return new Promise((resolve, reject) => {
