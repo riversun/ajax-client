@@ -253,6 +253,16 @@ error:e,// error object
 
 ```
 
+### Run on node.js
+
+If you set up `node-fetch` externally, you can use AjaxClient with node.js.
+
+```javascript
+import fetch from 'node-fetch';
+import { AjaxClient2 as AjaxClient } from 'ajax-client';
+const ajax = new AjaxClient({ fetch });
+```
+
 ### Run test server (node.js)
 
 - run test-server to test example above
