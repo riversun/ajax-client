@@ -153,8 +153,9 @@ export class AjaxClient2 {
   _getFetchParam(reqParam, options) {
 
 
+    const method = reqParam.method.toUpperCase();
     const fetchParam = {
-      method: reqParam.method.toUpperCase(),
+      method: method,
       mode: 'cors',
       cache: 'no-cache',
       headers: {
@@ -169,7 +170,9 @@ export class AjaxClient2 {
       fetchParam.headers['Content-Type'] = reqParam.contentType;
 
     } else {
-      throw Error('Please specify contentType.');
+      if (method === 'POST' || method === 'PUT') {
+        throw Error('Please specify contentType.');
+      }
     }
 
     if (options.xhrFields) {
@@ -223,7 +226,7 @@ export class AjaxClient2 {
     const asyncResult = new AjaxResult();
     const fetchParam = this._getFetchParam(reqParam, options);
 
-    const fnFetch = self.opt.fetch || fetch ;
+    const fnFetch = self.opt.fetch || fetch;
 
     const fetchPromise = fnFetch(reqParam.url, fetchParam);
 

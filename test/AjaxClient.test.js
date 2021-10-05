@@ -329,7 +329,7 @@ describe('AjaxClient', () => {
       client.ajax({
         type: 'get',
         url: `http://localhost:${serverPort}/test.html`,
-        contentType: 'application/json',//content-type of sending data
+        //contentType: 'application/json',//content-type of sending data
         dataType: 'text',//data type to parse when receiving response from server
         timeoutMillis: 5000,//timeout milli-seconds
         success: (response, xhr) => {
@@ -376,7 +376,7 @@ describe('AjaxClient', () => {
       client.ajax({
         type: 'GET',
         url: `http://localhost:${serverPort}/test.html`,
-        contentType: 'application/json',//content-type of sending data
+        //contentType: 'application/json',//content-type of sending data
         dataType: 'text',//data type to parse when receiving response from server
         timeoutMillis: 5000,//timeout milli-seconds
         success: (response, xhr) => {
@@ -404,7 +404,7 @@ describe('AjaxClient', () => {
       client.ajax({
         type: 'get',
         url: `http://localhost:${serverPort}/test_nothing`,
-        contentType: 'application/json',//content-type of sending data
+        //contentType: 'application/json',//content-type of sending data
         dataType: 'text',//data type to parse when receiving response from server
         timeoutMillis: 5000,//timeout milli-seconds
         success: (response, xhr) => {
@@ -432,7 +432,7 @@ describe('AjaxClient', () => {
       client.ajax({
         type: 'get',
         url: 'http://localhost:1111/test.html',
-        contentType: 'application/json',//content-type of sending data
+        //contentType: 'application/json',//content-type of sending data
         dataType: 'text',//data type to parse when receiving response from server
         timeoutMillis: 5000,//timeout milli-seconds
         success: (response, xhr) => {
@@ -459,7 +459,7 @@ describe('AjaxClient', () => {
       client.ajax({
         type: 'get',
         url: `http://localhost:${serverPort}/timeout`,
-        contentType: 'application/json',//content-type of sending data
+        //contentType: 'application/json',//content-type of sending data
         dataType: 'text',//data type to parse when receiving response from server
         timeoutMillis: 1000,//timeout milli-seconds
         success: (response, xhr) => {
@@ -492,33 +492,36 @@ describe('AjaxClient', () => {
 
     });//test
 
-    test('Illegal content-type to error', () => {
+    // Content-Type is not needed for GET request
+    // test('Illegal content-type to error', () => {
+    //
+    //   const client = new AjaxClient();
+    //
+    //   expect(function() {
+    //     client.ajax({
+    //       type: 'get',
+    //       url: `http://localhost:${serverPort}/test.html`,
+    //       //contentType: 'application/json; charset = UTF8',
+    //       dataType: 'text',
+    //     });
+    //   }).toThrow('Invalid content type');
+    //
+    // });//test
 
-      const client = new AjaxClient();
-
-      expect(function() {
-        client.ajax({
-          type: 'get',
-          url: `http://localhost:${serverPort}/test.html`,
-          contentType: 'application/json; charset = UTF8',
-          dataType: 'text',
-        });
-      }).toThrow('Invalid content type');
-
-    });//test
-    test('No content-type to error', () => {
-
-      const client = new AjaxClient();
-
-      expect(function() {
-        client.ajax({
-          type: 'get',
-          url: `http://localhost:${serverPort}/test.html`,
-          dataType: 'text',
-        });
-      }).toThrow('Please specify contentType');
-
-    });//test
+    // Content-Type is not needed for GET request
+    // test('No content-type to error', () => {
+    //
+    //   const client = new AjaxClient();
+    //
+    //   expect(function() {
+    //     client.ajax({
+    //       type: 'get',
+    //       url: `http://localhost:${serverPort}/test.html`,
+    //       dataType: 'text',
+    //     });
+    //   }).toThrow('Please specify contentType');
+    //
+    // });//test
     test('forget url', () => {
 
       const client = new AjaxClient();
@@ -570,6 +573,37 @@ describe('AjaxClient', () => {
         }
       });
 
+    });//test
+
+    test('No content-type to error while POST', () => {
+
+      const client = new AjaxClient();
+      //Data object to send
+      const data = {
+        message: "hello"
+      }
+
+      expect(function() {
+        client.postAsync({
+          url: `http://localhost:${serverPort}/api`,
+          headers: {
+            'X-Original-Header1': 'header-value-1',//Additional Headers
+            'X-Original-Header2': 'header-value-2',
+          },
+          data: JSON.stringify(data),//text data
+          dataType: 'json',//data type to parse when receiving response from server
+          timeoutMillis: 5000,//timeout milli-seconds
+
+          success: (response, xhr) => {
+            expect(JSON.stringify(response)).toBe(JSON.stringify({ output: 'Hi,there! You say hello' }));
+            done();
+          },
+          error: (e, xhr) => {
+          },
+          timeout: (e, xhr) => {
+          }
+        });
+      }).toThrow('Please specify contentType');
     });//test
   });//describe
 

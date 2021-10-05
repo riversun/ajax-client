@@ -125,6 +125,7 @@ export class AjaxClient {
     } else {
       throw Error(`Please check dataType:${options.dataType}. "json" or "text"  is supported as dataType now.`);
     }
+
     if (options.contentType) {
       try {
         xhr.setRequestHeader('Content-Type', options.contentType);
@@ -133,7 +134,9 @@ export class AjaxClient {
       }
 
     } else {
-      throw Error('Please specify contentType.');
+      if (options.type && options.type.toLowerCase() === 'post' || options.type && options.type.toLowerCase() === 'put') {
+        throw Error('Please specify contentType.');
+      }
     }
 
 
