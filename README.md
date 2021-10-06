@@ -19,17 +19,24 @@ npm install ajax-client
 
 and write followings in your code
 
+- AjaxClient2(**recommended**) is base on fetch API
+
+```javascript
+import {AjaxClient2 as AjaxClient} from 'ajax-client'
+```
+
+```javascript
+import ajax_client from 'ajax-client';
+const { AjaxClient2 } = ajax_client;
+
+```
+
 - AjaxClient is based on the XmlHttpRequest2
 
 ```javascript
 import {AjaxClient} from 'ajax-client'
 ```
 
-- AjaxClient2 is base on fetch API
-
-```javascript
-import {AjaxClient2 as AjaxClient} from 'ajax-client'
-```
 
 - use from CDN
 
@@ -45,7 +52,7 @@ import {AjaxClient2 as AjaxClient} from 'ajax-client'
 
 ```javascript
 
-       const client = new AjaxClient();
+       const client = new AjaxClient2();
  
        //Data object to send
        const data = {
@@ -82,6 +89,7 @@ import {AjaxClient2 as AjaxClient} from 'ajax-client'
 - Post form data
 
 ```javascript
+     const client = new AjaxClient2();
      const data = {
         message: "hello"
       }
@@ -118,7 +126,8 @@ import {AjaxClient2 as AjaxClient} from 'ajax-client'
 ### Post with Async/Await
 
 ```javascript
-  const result = await client.post({
+const client = new AjaxClient2();  
+const result = await client.post({
         url: 'http://localhost:9999/api',
         headers: {
           'X-Original-Header1': 'header-value-1',//Additional Headers
@@ -131,22 +140,44 @@ import {AjaxClient2 as AjaxClient} from 'ajax-client'
       });
 ```
 
+```js
+console.log(result.success); // true if success
+console.log(result.data);// get JSON-parsed data
+console.log(result.response.status);// get status code 200
+```
+
 #### Success Response 
 
 ```javascript
 {
 success: true,
 data:{ },// response payload from server
+response:{}, // get raw response.You can get response.status,response.statusText etc.  
 }
 ```
 
 #### Error Response 
+
+
+- server error
 
 ```javascript
 {
 success: false;
 cause:'error',// 'error' or 'timeout'
 error:e,// error object
+response:{}, // get raw response.You can get response.status,response.statusText etc.  
+}
+```
+
+- timeout error
+
+```javascript
+{
+  success: false;
+  cause:'timeout',// 'error' or 'timeout'
+    error:e,// error object
+    response:null,
 }
 ```
 
@@ -154,7 +185,7 @@ error:e,// error object
 ### Get
 
 ```javascript
-     const client = new AjaxClient();
+     const client = new AjaxClient2();
 
       client.ajax({
         type: 'get',
@@ -170,11 +201,18 @@ error:e,// error object
       });
 ```
 
+```js
+console.log(result.success); // true if success
+console.log(result.data);// get JSON-parsed data
+console.log(result.response.status);// get status code 200
+```
+
 
 ### Get with Async/Await
 
 ```javascript
-  const result = await client.get({
+const client = new AjaxClient2();  
+const result = await client.get({
         url: 'http://localhost:9999/api',
         headers: {
           'X-Original-Header1': 'header-value-1',//Additional Headers
@@ -191,16 +229,32 @@ error:e,// error object
 {
 success: true,
 data:{ },// response payload from server
+response:{}, // get raw response.You can get response.status,response.statusText etc.  
+
 }
 ```
 
 #### Error Response 
 
+- server error
+ 
 ```javascript
 {
 success: false;
 cause:'error',// 'error' or 'timeout'
 error:e,// error object
+response:{}, // get raw response.You can get response.status,response.statusText etc.  
+}
+```
+
+- timeout error
+
+```javascript
+{
+success: false;
+cause:'timeout',// 'error' or 'timeout'
+error:e,// error object
+response:null,  
 }
 ```
 
@@ -217,7 +271,7 @@ error:e,// error object
 <body>
 <script src="https://raw.githubusercontent.com/riversun/ajax-client/master/dist/ajaxclient.js"></script>
 <script>
-    const ajax = new AjaxClient();
+    const ajax = new AjaxClient2();
 
     //Data object to send
     const data = {
