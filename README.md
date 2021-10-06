@@ -19,7 +19,39 @@ npm install ajax-client
 
 and write followings in your code
 
-- AjaxClient2(**recommended**) is base on fetch API
+
+- AjaxClient is based on the XmlHttpRequest2 and HAS APIs most similar to jQuery's API
+
+```javascript
+import {AjaxClient} from 'ajax-client'
+client.ajax({
+  type: 'post',
+  url: 'http://localhost:9999/api',
+  headers: {
+    'X-Original-Header1': 'header-value-1',//Additional Headers
+    'X-Original-Header2': 'header-value-2',
+  },
+  contentType: 'application/json',//content-type of sending data
+  data: JSON.stringify(data),//text data
+  dataType: 'json',//data type to parse when receiving response from server
+  timeoutMillis: 5000,//timeout milli-seconds
+  // crossDomain: true,
+  // xhrFields: {
+  //   withCredentials: true,
+  // },
+  success: (response, xhr) => {
+  },
+  error: (e, xhr) => {
+
+  },
+  timeout: (e, xhr) => {
+
+  }
+});
+```
+
+
+- AjaxClient2(**recommended**) is base on **fetch API**
 
 ```javascript
 import {AjaxClient2 as AjaxClient} from 'ajax-client'
@@ -29,12 +61,6 @@ import {AjaxClient2 as AjaxClient} from 'ajax-client'
 import ajax_client from 'ajax-client';
 const { AjaxClient2 } = ajax_client;
 
-```
-
-- AjaxClient is based on the XmlHttpRequest2
-
-```javascript
-import {AjaxClient} from 'ajax-client'
 ```
 
 
@@ -74,13 +100,12 @@ import {AjaxClient} from 'ajax-client'
          // xhrFields: {
          //   withCredentials: true,
          // },
-         success: (response, xhr) => {
+         success: (data, response) => {
+           // response is fetch response
          },
-         error: (e, xhr) => {
- 
+         error: (data,response,cause,err) => {
          },
-         timeout: (e, xhr) => {
- 
+         timeout: (data,response,cause,err) => {
          }
        });
 
@@ -110,18 +135,33 @@ import {AjaxClient} from 'ajax-client'
          // xhrFields: {
          //   withCredentials: true,
          // },
-         success: (response, xhr) => {
-
-         },
-         error: (e, xhr) => {
- 
-         },
-         timeout: (e, xhr) => {
- 
-         }
+        success: (data, response) => {
+          // response is fetch response
+        },
+        error: (data,response,cause,err) => {
+        },
+        timeout: (data,response,cause,err) => {
+        }
       });
 ```
 
+### Post with done/fail
+
+```javascript
+ client.ajax({
+        type: 'post',
+        url: 'http://localhost:9999/api',
+        //contentType: 'application/json',//content-type of sending data
+        dataType: 'text',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+      }).done((data,response) => {
+        console.log(data);
+        console.log(response.status);
+      }).fail((data,response,cause,err) => {
+        console.log(data);
+        console.log(response.status);
+      });
+```
 
 ### Post with Async/Await
 
@@ -192,11 +232,12 @@ response:{}, // get raw response.You can get response.status,response.statusText
         url: 'http://localhost:9999/something.html',
         dataType: 'text',//data type to parse when receiving response from server
         timeoutMillis: 5000,//timeout milli-seconds
-        success: (response, xhr) => {
+        success: (data, response) => {
+          // response is fetch response
         },
-        error: (e, xhr) => {
+        error: (data,response,cause,err) => {
         },
-        timeout: (e, xhr) => {
+        timeout: (data,response,cause,err) => {
         }
       });
 ```
