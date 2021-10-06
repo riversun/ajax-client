@@ -37,14 +37,15 @@ export class AjaxClient2 {
     }
 
     return new Promise((resolve) => {
-      options.success = (response) => {
-        resolve({ success: true, data: response });
+      options.success = (data, response) => {
+        resolve({ success: true, data: data, response });
       };
-      options.error = (e) => {
+      options.error = (e, errResponse) => {
         resolve({
           success: false,
           cause: 'error',
           error: e,
+          response: errResponse,
         });
       };
       options.timeout = (e) => {
@@ -52,6 +53,7 @@ export class AjaxClient2 {
           success: false,
           cause: 'timeout',
           error: e,
+          response: null,
         });
       };
       this.ajax(options);
@@ -72,17 +74,19 @@ export class AjaxClient2 {
     }
 
     return new Promise((resolve) => {
-      options.success = (response) => {
+      options.success = (data, response) => {
         resolve({
           success: true,
-          data: response
+          data: data,
+          response,
         });
       };
-      options.error = (e) => {
+      options.error = (e, errResponse) => {
         resolve({
           success: false,
           cause: 'error',
           error: e,
+          response: errResponse,
         });
       };
       options.timeout = (e) => {
@@ -90,6 +94,7 @@ export class AjaxClient2 {
           success: false,
           cause: 'timeout',
           error: e,
+          response: null,
         });
       };
       this.ajax(options);

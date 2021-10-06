@@ -295,6 +295,7 @@ describe('AjaxClient', () => {
         },
       });
       expect(resultOf3rdAccess.data['req-cookies-copy']).toStrictEqual({});
+      expect(resultOf3rdAccess.response.status).toBe(200);
 
 
     });//test
@@ -821,25 +822,25 @@ describe('AjaxClient', () => {
         message: "hello"
       }
       expect(function() {
-      client.postAsync({
-        url: `http://localhost:${serverPort}/api`,
-        headers: {
-          'X-Original-Header1': 'header-value-1',//Additional Headers
-          'X-Original-Header2': 'header-value-2',
-        },
-        data: JSON.stringify(data),//text data
-        dataType: 'json',//data type to parse when receiving response from server
-        timeoutMillis: 5000,//timeout milli-seconds
+        client.postAsync({
+          url: `http://localhost:${serverPort}/api`,
+          headers: {
+            'X-Original-Header1': 'header-value-1',//Additional Headers
+            'X-Original-Header2': 'header-value-2',
+          },
+          data: JSON.stringify(data),//text data
+          dataType: 'json',//data type to parse when receiving response from server
+          timeoutMillis: 5000,//timeout milli-seconds
 
-        success: (response, xhr) => {
-          expect(JSON.stringify(response)).toBe(JSON.stringify({ output: 'Hi,there! You say hello' }));
-          done();
-        },
-        error: (e, xhr) => {
-        },
-        timeout: (e, xhr) => {
-        }
-      });
+          success: (response, xhr) => {
+            expect(JSON.stringify(response)).toBe(JSON.stringify({ output: 'Hi,there! You say hello' }));
+            done();
+          },
+          error: (e, xhr) => {
+          },
+          timeout: (e, xhr) => {
+          }
+        });
       }).toThrow('Please specify contentType');
 
     });//test

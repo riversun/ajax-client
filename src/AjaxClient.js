@@ -32,14 +32,15 @@ export class AjaxClient {
     }
 
     return new Promise((resolve) => {
-      options.success = (response) => {
-        resolve({ success: true, data: response });
+      options.success = (data,xhr) => {
+        resolve({ success: true, data: data,response:xhr });
       };
-      options.error = (e) => {
+      options.error = (e,xhr) => {
         resolve({
           success: false,
           cause: 'error',
           error: e,
+          response:xhr,
         });
       };
       options.timeout = (e) => {
@@ -47,6 +48,7 @@ export class AjaxClient {
           success: false,
           cause: 'timeout',
           error: e,
+          response:null,
         });
       };
       this.ajax(options);

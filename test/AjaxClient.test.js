@@ -626,8 +626,9 @@ describe('AjaxClient', () => {
         contentType: 'application/json',//content-type of sending data
         dataType: 'text',//data type to parse when receiving response from server
         timeoutMillis: 5000,//timeout milli-seconds
-        success: (response, xhr) => {
-          expect(response).toContain('Test HTML');
+        success: (data, xhr) => {
+          expect(data).toContain('Test HTML');
+          expect(xhr.status).toBe(200);
           done();
         },
         error: (e, xhr) => {
