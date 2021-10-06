@@ -55,22 +55,13 @@ const server = {
         });
       }
     });
-
-    this.app.post('/api-auth', bodyParser.json(), function(req, res, next) {
-      res.status(200);
+    this.app.post('/api-error', bodyParser.json(), function(req, res, next) {
+      res.status(500);
       const data = req.body;
       if (data) {
-
-        res.cookie('test-name1', 'test-value1', {
-          maxAge: 60000,
-          httpOnly: false,// true:cannot access from JS
-          secure:false,// true:can only send via HTTPS
-        });
-
         let message = "Hi,there! You say " + data.message;
         res.json({
           output: message,
-          'req-cookies-copy':req.cookies,
         });
       } else {
         let message = 'error:message not found.';
@@ -79,7 +70,30 @@ const server = {
         });
       }
     });
-    this.app.post('/form', bodyParser.urlencoded({ extended: true }),function(req, res, next) {
+    this.app.post('/api-auth', bodyParser.json(), function(req, res, next) {
+      res.status(200);
+      const data = req.body;
+      if (data) {
+
+        res.cookie('test-name1', 'test-value1', {
+          maxAge: 60000,
+          httpOnly: false,// true:cannot access from JS
+          secure: false,// true:can only send via HTTPS
+        });
+
+        let message = "Hi,there! You say " + data.message;
+        res.json({
+          output: message,
+          'req-cookies-copy': req.cookies,
+        });
+      } else {
+        let message = 'error:message not found.';
+        res.json({
+          error: message
+        });
+      }
+    });
+    this.app.post('/form', bodyParser.urlencoded({ extended: true }), function(req, res, next) {
       res.status(200);
 
       const data = req.body;
@@ -90,13 +104,13 @@ const server = {
         res.cookie('test-name2', 'test-value2', {
           maxAge: 60000,
           httpOnly: false,// true:cannot access from JS
-          secure:false,// true:can only send via HTTPS
+          secure: false,// true:can only send via HTTPS
         });
 
         let message = "Hi,there! You say " + data.message;
         res.json({
           output: message,
-          'req-cookies-copy':req.cookies,
+          'req-cookies-copy': req.cookies,
         });
       } else {
         let message = 'error:message not found.';
@@ -105,7 +119,6 @@ const server = {
         });
       }
     });
-
 
 
     this.app.get('/api', bodyParser.json(), function(req, res, next) {

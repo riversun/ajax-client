@@ -41,6 +41,7 @@ describe('AjaxClient', () => {
         data: JSON.stringify(data),
       }).done((result) => {
         try {
+          console.log(result)
           expect(result.output).toContain('Hi,there! You say hello');
           done();
         } catch (error) {
@@ -85,6 +86,7 @@ describe('AjaxClient', () => {
         data: JSON.stringify(data),
       }).done((result) => {
         try {
+          console.log("debug",result);
           expect(result.output).toContain('Hi,there! You say hello');
           done();
         } catch (error) {
@@ -93,7 +95,7 @@ describe('AjaxClient', () => {
       });
 
     });
-    test('Method "get" and receive "fail"', (done) => {
+    test('Method "get" and receive "fail" of status:404', (done) => {
 
       const client = new AjaxClient();
 
@@ -108,14 +110,39 @@ describe('AjaxClient', () => {
         //contentType: 'application/json',//content-type of sending data
         dataType: 'text',//data type to parse when receiving response from server
         timeoutMillis: 5000,//timeout milli-seconds
-      }).done((result) => {
-      }).fail((error) => {
-        expect(error.response.status).toBe(404);
+      }).done((data,response) => {
+      }).fail((data,response,cause) => {
+        console.log("response",response);
+        expect(response.status).toBe(404);
+        expect(cause).toBe("server error,statusCode:404");
         done();
       });
 
     });//test
 
+    test('Method "get" and receive "fail" of network error', (done) => {
+
+      const client = new AjaxClient();
+
+      //Data object to send
+      const data = {
+        message: "hello"
+      }
+
+      client.ajax({
+        type: 'get',
+        url: `http://localhost:12345`,
+        //contentType: 'application/json',//content-type of sending data
+        dataType: 'text',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+      }).done((data,response) => {
+      }).fail((data,response,cause,err) => {
+        console.log("response",err);
+        expect(cause).toBe("network error");
+        done();
+      });
+
+    });//test
     test('"post"', (done) => {
 
       const client = new AjaxClient();
@@ -137,21 +164,81 @@ describe('AjaxClient', () => {
         dataType: 'json',//data type to parse when receiving response from server
         timeoutMillis: 5000,//timeout milli-seconds
 
-        success: (response, xhr) => {
+        success: (data, response) => {
           try {
-            expect(JSON.stringify(response)).toBe(JSON.stringify({ output: 'Hi,there! You say hello' }));
+            expect(JSON.stringify(data)).toBe(JSON.stringify({ output: 'Hi,there! You say hello' }));
             done();
           } catch (error) {
             done(error);
           }
         },
-        error: (e, xhr) => {
+        error: (data,response,cause,err) => {
 
+        },
+        timeout: (data,response,cause,err) => {
+
+        }
+      });
+
+    });//test
+    test('"post" and fail', async(done) => {
+
+      const client = new AjaxClient();
+
+      //Data object to send
+      const data = {
+        message: "hello"
+      }
+
+      if(false)
+      client.ajax({
+        type: 'post',
+        url: `http://localhost:${serverPort}/api-error`,
+        headers: {
+          'X-Original-Header1': 'header-value-1',//Additional Headers
+          'X-Original-Header2': 'header-value-2',
+        },
+        contentType: 'application/json',//content-type of sending data
+        data: JSON.stringify(data),//text data
+        dataType: 'json',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+
+        success: (data, response) => {
+          try {
+            expect(JSON.stringify(data)).toBe(JSON.stringify({ output: 'Hi,there! You say hello' }));
+            done();
+          } catch (error) {
+            done(error);
+          }
+        },
+        error: (data,response) => {
+console.log("dddd",data,response)
         },
         timeout: (e, xhr) => {
 
         }
       });
+
+
+      // first access = Receive cookies with the intention of credential
+      const result = await client.post({
+        type: 'post',
+        url: `http://localhost:${serverPort}/api-error`,
+        headers: {
+          'X-Original-Header1': 'header-value-1',//Additional Headers
+          'X-Original-Header2': 'header-value-2',
+        },
+        contentType: 'application/x-www-form-urlencoded',
+        data: data,
+        dataType: 'json',//data type to parse when receiving response from server
+        timeoutMillis: 5000,//timeout milli-seconds
+        crossDomain: true,
+        xhrFields: {
+          withCredentials: true,
+        },
+      });
+      console.log(result);
+      done();
 
     });//test
     test('"post with cookie"', async () => {

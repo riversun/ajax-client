@@ -40,20 +40,20 @@ export class AjaxClient2 {
       options.success = (data, response) => {
         resolve({ success: true, data: data, response });
       };
-      options.error = (e, errResponse) => {
+      options.error = (data, response, cause, err) => {
         resolve({
           success: false,
-          cause: 'error',
-          error: e,
-          response: errResponse,
+          cause: cause,
+          error: err,
+          response: response,
         });
       };
-      options.timeout = (e) => {
+      options.timeout = (data, response, cause, err) => {
         resolve({
           success: false,
-          cause: 'timeout',
-          error: e,
-          response: null,
+          cause: cause,
+          error: err,
+          response: response,
         });
       };
       this.ajax(options);
@@ -146,10 +146,13 @@ export class AjaxClient2 {
       reqParam.headers = headers;
     }
 
+
     if (dataType === 'json' || dataType === 'text') {
-      return this._handleData(reqParam, dataType, options);
+      const asyncResult = this._handleData(reqParam, dataType, options);
+      return asyncResult;
     } else if (dataType === 'jsonp') {
-      return this._handleJsonp(reqParam, options);
+      const asyncResult = this._handleJsonp(reqParam, options);
+      return asyncResult;
     } else {
       throw new Error(`Please check dataType:${dataType} dataType must be 'json' or 'jsonp'`);
     }
@@ -235,65 +238,81 @@ export class AjaxClient2 {
 
     const fetchPromise = fnFetch(reqParam.url, fetchParam);
 
-    const timeout = (promise, options) => {
+    const fnTimeout = (promise, options) => {
+
       return new Promise((resolve, reject) => {
 
-        //タイムアウトのsetTimeと
+        //(1)タイムアウトのsetTimeと (2) fetchPromiseを同時実行
         if (options && options.timeoutMillis) {
+          // (1)
           setTimeout(() => {
-            reject('timeout');
+            reject({ data: null, cause: `timeout,${options.timeoutMillis}ms elapsed`, response: null });
           }, options.timeoutMillis);
         }
 
-        //fetchPromiseを同時実行
+        // (2)
         promise.then((response) => {
 
           if (!response.ok) {
-            const errorObj = response.statusText;
-            //return Promise.reject({ data: errorObj, response });
-            reject({ data: errorObj, response });
-          }
-          if (dataType === 'json') {
+            // - !response.okの場合(status が 200-299 の範囲外の場合)
+            if (dataType === 'json') {
+              response.json().then((jsonData) => {
+                reject({ data: jsonData, cause: `server error,statusCode:${response.status}`, response });
+              });
+            } else if (dataType === 'text') {
+              response.text().then((textData) => {
+                reject({ data: textData, cause: `server error,statusCode:${response.status}`, response });
+              });
+            }
 
-            response.json().then((jsonData) => {
-              resolve({ data: jsonData, response });
-              //return Promise.resolve({ data: jsonData, response });
-              // return {data:jsonData,response}; // is also ok
-            });
+          } else {
+            // - response.ok の場合(status が 200-299 の範囲内の場合)
+            if (dataType === 'json') {
+              response.json().then((jsonData) => {
+                resolve({ data: jsonData, response });
+              });
+            } else if (dataType === 'text') {
+              response.text().then((textData) => {
+                //return Promise.resolve({ data: jsonData, response });
+                resolve({ data: textData, response });
+                // return {data:jsonData,response}; // is also ok
+              });
+            }
           }
-          if (dataType === 'text') {
-            response.text().then((jsonData) => {
-              //return Promise.resolve({ data: jsonData, response });
-              resolve({ data: jsonData, response });
-              // return {data:jsonData,response}; // is also ok
-            });
-          }
-        }).catch((err) => {
-          reject(err);
-        });
+        })
+          .catch((err) => {
+            reject({ data: null, cause: `network error`, response: null, err });
+          });
       });
     };
 
-    timeout(fetchPromise, options)
+    fnTimeout(fetchPromise, options)
       .then(
         (result) => {
-          asyncResult._success(result.data);
+          // - resolve を受け取った
+          //asyncResult._success(result.data, result.response);
+          asyncResult._success(result);
           if (options && options.success) {
             options.success(result.data, result.response);//data.data);
           }
         })
-      .catch(err => {
-        const errorObj = err;
-        asyncResult._fail(errorObj);
+      .catch(errResult => {
 
-        if (err === 'timeout') {
+        // - reject を受け取る
+        //const errorObj = errResult;
+        //asyncResult._fail(errResult.data, errResult.response,errResult.cause,errResult.err);// todo なにこれ
+        asyncResult._fail(errResult);
+
+        if (errResult.cause === 'timeout') {
 
           if (options && options.timeout) {
-            options.timeout();
+            options.timeout(errResult.data, errResult.response, errResult.cause, errResult.err);
           }
         } else {
           if (options && options.error) {
-            options.error(err, err.response);
+            //options.error(errResult, errResult.response);
+            options.error(errResult.data, errResult.response, errResult.cause, errResult.err);
+
           }
         }
       });
@@ -326,14 +345,17 @@ export class AjaxClient2 {
     //global object
     window[callbackFuncName] = (res) => {
       delete window[callbackFuncName];
-      asyncResult._success(res);
+
+      asyncResult._success({ data: res, response: null });
       if (options && options.success) {
+
         options.success(res, null);
       }
     };
 
     const parentEle = document.getElementsByTagName('head') ? document.getElementsByTagName('head')[0] : document.body;
     parentEle.appendChild(scriptEle);
+
     return asyncResult;
 
   }
@@ -399,16 +421,16 @@ class AjaxResult {
     return this;
   }
 
-  _success(response) {
+  _success(successResult) {
     if (this._successFunc) {
-      this._successFunc(response);
+      this._successFunc(successResult.data, successResult.response);
     }
 
   }
 
-  _fail(response) {
+  _fail(errResult) {
     if (this._failFunc) {
-      this._failFunc(response);
+      this._failFunc(errResult.data, errResult.response, errResult.cause, errResult.err);
     }
   }
 
