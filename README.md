@@ -67,7 +67,7 @@ const { AjaxClient2 } = ajax_client;
 - use from CDN
 
 ```
-<script src="https://cdn.jsdelivr.net/npm/ajax-client/lib/ajax-client.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ajax-client@2.0.2/lib/ajax-client.min.js"></script>
 ```
 
 ## usage
