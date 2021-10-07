@@ -251,36 +251,56 @@ export class AjaxClient2 {
         }
 
         // (2)
-        promise.then((response) => {
+        promise.then(
+          (response) => {
+            if (!response.ok) {
+              // - !response.okの場合(status が 200-299 の範囲外の場合)
+              if (dataType === 'json') {
+                response.json()
+                  .then((jsonData) => {
+                    reject({ data: jsonData, cause: `server error,statusCode:${response.status}`, response });
+                  })
+                  .catch((err) => {
+                    reject({ data: null, cause: `client error,${err}`, response });
+                  });
 
-          if (!response.ok) {
-            // - !response.okの場合(status が 200-299 の範囲外の場合)
-            if (dataType === 'json') {
-              response.json().then((jsonData) => {
-                reject({ data: jsonData, cause: `server error,statusCode:${response.status}`, response });
-              });
-            } else if (dataType === 'text') {
-              response.text().then((textData) => {
-                reject({ data: textData, cause: `server error,statusCode:${response.status}`, response });
-              });
-            }
+              } else if (dataType === 'text') {
+                response.text()
+                  .then((textData) => {
+                    reject({ data: textData, cause: `server error,statusCode:${response.status}`, response });
+                  })
+                  .catch((err) => {
+                    reject({ data: null, cause: `client error,${err}`, response });
+                  });
+              }
 
-          } else {
-            // - response.ok の場合(status が 200-299 の範囲内の場合)
-            if (dataType === 'json') {
-              response.json().then((jsonData) => {
-                resolve({ data: jsonData, response });
-              });
-            } else if (dataType === 'text') {
-              response.text().then((textData) => {
-                //return Promise.resolve({ data: jsonData, response });
-                resolve({ data: textData, response });
-                // return {data:jsonData,response}; // is also ok
-              });
+            } else {
+              // - response.ok の場合(status が 200-299 の範囲内の場合)
+              if (dataType === 'json') {
+                response.json()
+                  .then((jsonData) => {
+                    resolve({ data: jsonData, response });
+                  })
+                  .catch((err) => {
+                    reject({ data: null, cause: `client error,${err}`, response });
+                  });
+
+
+              } else if (dataType === 'text') {
+                response.text()
+                  .then((textData) => {
+                    //return Promise.resolve({ data: jsonData, response });
+                    resolve({ data: textData, response });
+                    // return {data:jsonData,response}; // is also ok
+                  })
+                  .catch((err) => {
+                    reject({ data: null, cause: `client error,${err}`, response });
+                  });
+              }
             }
-          }
-        })
+          })
           .catch((err) => {
+            console.log("エラー", err)
             reject({ data: null, cause: `network error`, response: null, err });
           });
       });

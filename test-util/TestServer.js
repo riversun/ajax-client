@@ -150,7 +150,13 @@ const server = {
         });
       }
     });
+    this.app.get('/text', bodyParser.json(), function(req, res, next) {
 
+      res.status(200);
+
+      res.end("example text response");
+
+    });
     this.app.get('/timeout', bodyParser.json(), function(req, res, next) {
 
       res.status(200);
