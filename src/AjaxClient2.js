@@ -81,20 +81,20 @@ export class AjaxClient2 {
           response,
         });
       };
-      options.error = (e, errResponse) => {
+      options.error = (data, response, cause, err) => {
         resolve({
           success: false,
-          cause: 'error',
-          error: e,
-          response: errResponse,
+          cause: cause,
+          error: err,
+          response: response,
         });
       };
-      options.timeout = (e) => {
+      options.timeout = (data, response, cause, err) => {
         resolve({
           success: false,
-          cause: 'timeout',
-          error: e,
-          response: null,
+          cause: cause,
+          error: err,
+          response: response,
         });
       };
       this.ajax(options);
