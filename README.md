@@ -192,7 +192,7 @@ console.log(result.response.status);// get status code 200
 {
 success: true,
 data:{ },// response payload from server
-response:{}, // get raw response.You can get response.status,response.statusText etc.  
+response:{}, // get raw fetch response.You can get response.status,response.statusText etc.  
 }
 ```
 
@@ -201,21 +201,55 @@ response:{}, // get raw response.You can get response.status,response.statusText
 
 - server error
 
+Occurs when the server side returns a status code other than 200-299.
+Parse the error object yourself if you want to determine more details.
+
 ```javascript
 {
 success: false;
-cause:'error',// 'error' or 'timeout'
+cause:'server error,statusCode:404',
 error:e,// error object
-response:{}, // get raw response.You can get response.status,response.statusText etc.  
+response:{}, // get raw fetch response.You can get response.status,response.statusText etc.  
 }
 ```
 
+- client error
+
+When you specify json as the expected data type, but the server returns text, etc.
+Parse the error object yourself if you want to determine more details.
+
+```javascript
+{
+success: false;
+cause:'client error,${error_message_thrown_at_client}',
+error:e,// error object
+response:{}, // get raw fetch response.You can get response.status,response.statusText etc.
+}
+```
+
+- network error
+
+Occurs when the network is disconnected or the server cannot be found.
+Parse the error object yourself if you want to determine more details.
+
+```javascript
+{
+success: false;
+cause:'network error',
+error:e,// error object
+response:null,  // no server response
+}
+```
+
+
 - timeout error
+
+- Occurs when no reply is received from the server for more than the specified timeout milliseconds.
 
 ```javascript
 {
   success: false;
-  cause:'timeout',// 'error' or 'timeout'
+  cause:'timeout,100ms elapsed',
     error:e,// error object
     response:null,
 }
