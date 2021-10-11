@@ -43,6 +43,7 @@ export class AjaxClient2 {
       options.error = (data, response, cause, err) => {
         resolve({
           success: false,
+          data,
           cause: cause,
           error: err,
           response: response,
@@ -51,6 +52,7 @@ export class AjaxClient2 {
       options.timeout = (data, response, cause, err) => {
         resolve({
           success: false,
+          data,
           cause: cause,
           error: err,
           response: response,
@@ -84,6 +86,7 @@ export class AjaxClient2 {
       options.error = (data, response, cause, err) => {
         resolve({
           success: false,
+          data,
           cause: cause,
           error: err,
           response: response,
@@ -92,6 +95,7 @@ export class AjaxClient2 {
       options.timeout = (data, response, cause, err) => {
         resolve({
           success: false,
+          data,
           cause: cause,
           error: err,
           response: response,
@@ -261,7 +265,15 @@ export class AjaxClient2 {
                     reject({ data: jsonData, cause: `server error,statusCode:${response.status}`, response });
                   })
                   .catch((err) => {
-                    reject({ data: null, cause: `client error,${err}`, response });
+                    // json parse error の場合は text　でとりなおす
+                    response.text()
+                      .then((textData) => {
+                        reject({ data: textData, cause: `server error,statusCode:${response.status}`, response });
+                      })
+                      .catch((err) => {
+                        reject({ data: null, cause: `client error,${err}`, response });
+                      });
+                    // reject({ data: null, cause: `client error,${err}`, response });
                   });
 
               } else if (dataType === 'text') {

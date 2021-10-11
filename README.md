@@ -207,6 +207,7 @@ Parse the error object yourself if you want to determine more details.
 ```javascript
 {
 success: false;
+data:{ },// response payload from server
 cause:'server error,statusCode:404',
 error:e,// error object
 response:{}, // get raw fetch response.You can get response.status,response.statusText etc.  
@@ -221,6 +222,7 @@ Parse the error object yourself if you want to determine more details.
 ```javascript
 {
 success: false;
+data:{ },// response payload from server
 cause:'client error,${error_message_thrown_at_client}',
 error:e,// error object
 response:{}, // get raw fetch response.You can get response.status,response.statusText etc.
@@ -235,6 +237,7 @@ Parse the error object yourself if you want to determine more details.
 ```javascript
 {
 success: false;
+data:null,
 cause:'network error',
 error:e,// error object
 response:null,  // no server response
@@ -249,6 +252,7 @@ response:null,  // no server response
 ```javascript
 {
   success: false;
+  data:null,
   cause:'timeout,100ms elapsed',
     error:e,// error object
     response:null,

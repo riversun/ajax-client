@@ -1,6 +1,6 @@
 {
   "name": "ajax-client",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "A simple ajax client with 'jquery-like' API",
   "main": "lib/ajax-client.js",
   "browserslist": [
