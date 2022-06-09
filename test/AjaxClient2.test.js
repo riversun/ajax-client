@@ -1,4 +1,4 @@
-const Server = require('../test-util/TestServer.js');
+const Server = require('../test-util/TestServer.cjs');
 const AjaxClient = require('../src/AjaxClient2.js').AjaxClient2;
 let server;
 

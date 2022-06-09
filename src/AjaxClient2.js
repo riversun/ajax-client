@@ -1,4 +1,3 @@
-const { URLSearchParams } = require("url");
 
 /**
  * AjaxClient2

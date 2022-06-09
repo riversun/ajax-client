@@ -1,4 +1,4 @@
-const Server=require('./TestServer');
+const Server=require('./TestServer.cjs');
 
 const server=new Server();
 
