@@ -32,14 +32,10 @@ module.exports = (env, argv) => {
             path: path.join(__dirname, 'lib'),
             publicPath: '/',
             filename: argv.mode === 'production' ? `[name].js` : `[name].js`,  //`[name].min.js`
-            // library: '',
-            // libraryExport: '',
-            // libraryTarget: 'umd',
-            // globalObject: 'this',//for both browser and node.js
-            // umdNamedDefine: true,
             library: {
                 type: 'umd',
             },
+            globalObject: 'this',
         },
 
         optimization: {
